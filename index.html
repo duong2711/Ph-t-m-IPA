@@ -8,10 +8,25 @@
     <link rel="stylesheet" href="stylephonetics.css">
 
     </head>
-<body>
+    <button id="logout-btn" style="display: none;">Đăng xuất</button>
+    <body>
 
-    <h1>Bảng Phiên Âm IPA (Tiếng Anh)</h1>
+    <h1>Học Phiên Âm IPA</h1>
 
+
+    <div id="auth-container">
+        <h2>Đăng nhập Hệ thống</h2>
+        <p style=" color: #7f8c8d; margin-top: 10px; text-align: center;">
+    (<a href="https://duong2711.github.io/Phat_Am_IPA/" style="color: #3498db; text-decoration: none; font-weight: bold; font-style: italic;">Bấm vào đây </a> để đi đến website chính thức nếu đang ở zalo/FB)
+        <div id="auth-status">Đang kiểm tra trạng thái...</div>
+        
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email (dùng để đăng nhập)" required>
+            <input type="password" id="login-password" placeholder="Mật khẩu" required>
+            <button type="submit" id="login-btn">ĐĂNG NHẬP</button>
+        </form>
+        <p style=" color: #7f8c8d; margin-top: 10px; text-align: center;">(Chỉ cho phép các tài khoản đã được tạo sẵn trên hệ thống).</p>
+    </div>
     <div id="guide-display">
         
         <div id="video-custom-controls">
@@ -31,7 +46,7 @@
 
         <div id="comments-section">
             <h3 id="comment-toggle-header">
-                <span class="toggle-arrow">▼</span> Bình luận cho ký tự: <span id="comment-symbol-display"></span>
+                <span class="toggle-arrow">▼</span> Luyện phát âm: /<span id="comment-symbol-display"></span>/
             </h3>
             
             <div id="comment-content-wrapper">
@@ -54,8 +69,7 @@
 
     </div> 
 
-    <div class="ipa-chart">
-        <h2>Vowels (Nguyên âm)</h2>
+    <div class="ipa-chart" style="display: none;">
         <h3>Monophthongs (Nguyên âm đơn)</h3>
         <div class="ipa-section" id="monophthongs">
             
