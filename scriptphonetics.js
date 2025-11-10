@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhYmFrdWFna2Z1Ynl6cHVjZnpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2ODU3NDYsImV4cCI6MjA3ODI2MTc0Nn0.xD8WGjCdPrTZS4HT8ftCszNM4f-cKgbMNBgYtAUf9sg'; 
     const AUDIO_BUCKET_NAME = 'audio_comments'; 
     
-    // [CẤU HÌNH ADMIN VÀ HOÀN THÀNH KÝ TỰ]
+    // [FIX] Cấu hình Admin và LocalStorage
     const ADMIN_PASSWORD = 'admin'; 
     const COMPLETION_STORAGE_KEY = 'ipa_completion_status';
     
@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ------------------------------------------
 
     const symbols = document.querySelectorAll('.ipa-symbol');
-    const completionIcons = document.querySelectorAll('.completion-container'); // [THÊM MỚI]
-
+    // [FIX] Lấy tất cả các container của icon hoàn thành
+    const completionIcons = document.querySelectorAll('.completion-container'); 
+    
     // Lấy các phần tử DOM
     const vimeoPlayerContainer = document.getElementById('vimeo-player-container');
     const iframeTarget = document.getElementById('iframe-target');
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let mediaRecorder;
     let audioChunks = [];
-    let currentSymbol = ''; 
+    let currentSymbol = ''; // Sẽ chứa ký tự IPA GỐC (ví dụ: 'ɪ', 'tʃ')
     let recordedAudioBlob = null; 
     let currentVideoSrc = null;
 
@@ -88,11 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
     videoPauseBtn.disabled = true;
     vimeoPlayerContainer.classList.add('video-hidden');
 
-    // [FIX LỖI KÝ TỰ] Hàm chuẩn hóa tên ký tự cho Supabase Storage
+    // Hàm chuẩn hóa tên ký tự cho Supabase Storage (Quan trọng để tránh lỗi upload)
     function getSafeSymbolName(symbol) {
         let safeName = symbol.replace(/:/g, 'L');
         
-        // Ký tự đặc biệt (đảm bảo logic này khớp với data-symbol trong HTML)
         safeName = safeName.replace(/ʃ/g, 'sh');
         safeName = safeName.replace(/ʒ/g, 'zh');
         safeName = safeName.replace(/θ/g, 'th');
@@ -102,11 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
         safeName = safeName.replace(/dʒ/g, 'j');
         safeName = safeName.replace(/ʌ/g, 'A');
         safeName = safeName.replace(/ə/g, 'schwa');
-        
-        // [QUAN TRỌNG] Xử lý ɪ và ʊ đúng
-        safeName = safeName.replace(/ɪ/g, 'I'); // I ngắn -> I
-        safeName = safeName.replace(/ʊ/g, 'U'); // U ngắn -> U
-        
+        safeName = safeName.replace(/ɪ/g, 'I'); 
+        safeName = safeName.replace(/ʊ/g, 'U'); 
         safeName = safeName.replace(/ɜ/g, 'er');
         safeName = safeName.replace(/ɔ/g, 'aw');
         safeName = safeName.replace(/æ/g, 'aE');
@@ -165,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         commentContentWrapper.classList.toggle('collapsed');
     });
 
-    // --- LOGIC HOÀN THÀNH KÝ TỰ (THÊM MỚI) ---
+    // --- LOGIC HOÀN THÀNH KÝ TỰ (CHỨC NĂNG MỚI) ---
 
     // 1. Hàm tải trạng thái hoàn thành từ LocalStorage
     function loadCompletionStatus() {
@@ -253,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mediaRecorder.start();
 
             recordButton.disabled = true;
-            stopButton.disabled = true;
+            stopButton.disabled = false;
             sendCommentButton.disabled = true;
             recordingPreview.style.display = 'none';
             recordStatus.textContent = "🔴 Đang ghi âm... Bấm 'Dừng' khi xong.";
@@ -325,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .from('comments')
                 .insert([
                     { 
-                        symbol: currentSymbol, // LƯU KÝ TỰ GỐC (Ví dụ: ɪ)
+                        symbol: currentSymbol, // LƯU KÝ TỰ GỐC
                         audio_url: audioURL, // URL thủ công
                         created_at: new Date().toISOString()
                     }
@@ -364,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
             commentsList.innerHTML = ''; 
             
             if (data.length === 0) {
-                commentsList.innerHTML = '<p>Bạn chưa tập phát âm kí tự này.</p>';
+                commentsList.innerHTML = '<p>Chưa có bình luận nào cho ký tự này.</p>';
                 return;
             }
 
