@@ -83,7 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
         recordStatus.textContent = user ? '' : 'Vui lòng đăng nhập để gửi ghi âm.';
     }
 
-
+    /**
+     * @description Cập nhật giao diện người dùng dựa trên trạng thái đăng nhập.
+     * @param {object | null} user - Đối tượng người dùng Supabase
+     */
     function updateUIForUser(user) {
         if (user) {
             currentUserId = user.id;
@@ -95,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ipaChart.style.display = 'grid'; 
             guideDisplay.style.display = 'flex'; 
 
-            // Bổ sung để tải trạng thái hoàn thành ngay lập tức
+            // Tải trạng thái hoàn thành ngay lập tức
             loadCompletionStatus(user);
 
         } else {
@@ -107,14 +110,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ipaChart.style.display = 'none'; 
             guideDisplay.style.display = 'none'; 
-            hideVideoAndShowPlaceholder(); 
+            hideVideoAndShowPlaceholder();
+            
+            // Xóa trạng thái hoàn thành trên giao diện khi đăng xuất
+            symbols.forEach(symbolElement => {
+                symbolElement.classList.remove('completed');
+                const iconElement = symbolElement.querySelector('.completion-status-icon');
+                if (iconElement) iconElement.textContent = '☐';
+            });
         }
         
         updateCommentFormVisibility(user); 
     }
 
+    /**
+     * @description Lắng nghe sự thay đổi trạng thái xác thực để cập nhật giao diện.
+     * (Đây là cách Supabase khuyến nghị để kiểm tra session khi tải trang/refresh)
+     */
     sb.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_OUT' || event === 'SIGNED_IN') {
+        if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
              updateUIForUser(session?.user);
         }
     });
@@ -574,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Hiển thị cảnh báo gửi, nhưng vẫn cho phép tải
         if (!currentUserId) {
-            commentsList.innerHTML = '<p>ghi âm đang tải (Vui lòng đăng nhập để gửi).</p>';
+            commentsList.innerHTML = '<p>Ghi âm đang tải (Vui lòng đăng nhập để gửi).</p>';
         }
 
         try {
@@ -670,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- KHỞI TẠO VÀ TẢI TRẠNG THÁI NGAY LẬP TỨC ---
+    // Giữ lại hàm initialLoad nhưng đảm bảo nó được gọi.
     async function initialLoad() {
         const { data: { session } } = await sb.auth.getSession();
         updateUIForUser(session?.user);
@@ -703,28 +718,14 @@ document.addEventListener('DOMContentLoaded', () => {
             activateTab(targetId);
         });
     });
-
-    // Thêm logic vuốt ngang (Tùy chọn, cuộn ngang bằng cách bấm tab là đủ)
-    // ipaTabsContainer.addEventListener('scroll', () => { ... logic cho swipe ... });
     
     // Đảm bảo tab đầu tiên được hiển thị khi tải trang
     activateTab('monophthongs');
     
-    // Cần phải cập nhật hàm loadCompletionStatus để target các section mới:
-    async function loadCompletionStatus(user) {
-        // ... (Giữ nguyên phần đầu hàm) ...
-        
-        // Thay đổi phần lặp qua symbols
-        symbols.forEach(symbolElement => {
-            const ipaKey = symbolElement.dataset.symbol;
-            // ... (Giữ nguyên logic kiểm tra trạng thái) ...
-        });
-
-        // ... (Giữ nguyên phần cuối hàm) ...
-    }
     // Chú ý: Hàm loadCompletionStatus đã được cập nhật logic ở trên không cần thay đổi thêm gì.
 
     // --- KẾT THÚC LOGIC TAB/SWIPE NGANG ---
+    // Gọi hàm initialLoad để kiểm tra session ngay khi DOMContentLoaded
     initialLoad();
 
 });
