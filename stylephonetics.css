@@ -1,22 +1,24 @@
-/* === [CẬP NHẬT] Bố cục Grid 2 cột cho TẤT CẢ màn hình (theo yêu cầu) === */
+/* === [CẬP NHẬT] Bố cục Grid cho MỌI màn hình (Mobile First: 1 CỘT XẾP CHỒNG) === */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
     
-    /* Bố cục Grid */
+    /* Bố cục Grid MẶC ĐỊNH (Mobile: 1 Cột) */
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 cột bằng nhau */
-    grid-template-rows: auto auto 1fr;   /* Hàng 1 cho Header, Hàng 2 cho Auth, Hàng 3 cho nội dung */
+    grid-template-columns: 1fr; /* Luôn là 1 cột cho Mobile */
+    grid-template-rows: auto auto auto 1fr;   /* Header, Auth, Guide, Chart */
     grid-template-areas:
-        "header-area header-area" /* Đổi tên khu vực header */
-        "auth-area auth-area"
-        "chart-area guide-area";
+        "header-area"
+        "auth-area"
+        "guide-area" /* Khu vực hướng dẫn (video/comments) lên trên */
+        "chart-area"; /* Khu vực IPA chart xuống dưới */
     
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    padding: 15px; /* Giảm padding cho Mobile */
+    /* Bỏ max-height/overflow:hidden để nội dung có thể cuộn tự nhiên */
+    height: auto; 
+    max-height: none; 
+    overflow-y: auto; 
+    padding: 15px; 
     position: relative; 
 }
 
@@ -24,39 +26,38 @@ body {
 
 /* #logout-btn: Đặt CỐ ĐỊNH ở góc trên bên phải và dịch lên cao nhất (top: 0) */
 #logout-btn { 
-    position: fixed; /* Cố định vị trí trên toàn trang */
-    top: 0px; /* Dịch lên sát cạnh trên */
-    right: 10px; /* Sát cạnh phải */
-    padding: 6px 10px; /* Giảm padding cho mobile */
+    position: fixed; 
+    top: 0px; 
+    right: 10px; 
+    padding: 6px 10px; 
     background-color: #e74c3c; 
     color: white; 
     border: none; 
     border-radius: 5px; 
     cursor: pointer; 
-    z-index: 1000; /* Luôn nằm trên cùng */
-    font-size: 0.8em; /* Giảm cỡ chữ nút cho mobile */
+    z-index: 1000; 
+    font-size: 0.8em; 
 }
 
 /* h1: CĂN GIỮA text và loại bỏ padding-right gây lệch */
 h1 {
     grid-area: header-area; 
     color: #2c3e50;
-    text-align: center; /* QUAN TRỌNG: Đảm bảo text luôn căn giữa */
-    font-size: 1.3em; /* [Mobile] Giảm cỡ chữ h1 */
+    text-align: center; 
+    font-size: 1.3em; 
     margin: 5px 0 10px 0;
-    /* Loại bỏ padding-right để tiêu đề căn giữa hoàn toàn */
 }
 
 /* === KẾT THÚC ĐỊNH DẠNG HEADER === */
 
 h2 {
-    font-size: 1.1em; /* [Mobile] Giảm cỡ chữ h2 */
+    font-size: 1.1em; 
     margin: 10px 0;
     color: #2c3e50;
     text-align: center;
 }
 h3 {
-    font-size: 1.0em; /* [Mobile] Giảm cỡ chữ h3 */
+    font-size: 1.0em; 
     margin: 10px 0;
     color: #2c3e50;
     text-align: center;
@@ -66,7 +67,7 @@ h3 {
 #auth-container {
     grid-area: auth-area;
     padding: 15px;
-    background-color: #e8f4f8; /* Màu nền nhẹ */
+    background-color: #e8f4f8; 
     border: 1px solid #3498db;
     border-radius: 8px;
     margin: 0 0 10px 0;
@@ -117,15 +118,16 @@ h3 {
 #login-btn:hover { background-color: #27ae60; }
 
 
-/* === [CẬP NHẬT] Cột bên TRÁI (Bảng IPA) === */
+/* === [CẬP NHẬT] Cột bên TRÁI (Bảng IPA) - VỊ TRÍ XUỐNG DƯỚI TRÊN MOBILE === */
 .ipa-chart {
     grid-area: chart-area; 
-    overflow-y: auto; 
+    overflow-y: visible; /* Cho phép cuộn nếu cần */
     max-width: none;
-    padding-right: 5px; 
+    padding-right: 0; /* Bỏ padding-right mặc định */
     display: grid; 
     grid-template-columns: 1fr; 
     grid-template-rows: auto 1fr;
+    margin-top: 20px; /* Thêm khoảng cách với phần trên */
 }
 
 .ipa-section {
@@ -175,10 +177,10 @@ h3 {
     margin-top: 3px;
 }
 
-/* === [CẬP NHẬT] Cột bên PHẢI (Video + Hướng dẫn) === */
+/* === [CẬP NHẬT] Cột bên PHẢI (Video + Hướng dẫn) - VỊ TRÍ LÊN TRÊN TRÊN MOBILE === */
 #guide-display {
     grid-area: guide-area; 
-    overflow-y: auto;
+    overflow-y: visible; /* Cho phép cuộn nếu cần */
     max-width: none;
     
     padding: 5px; 
@@ -200,7 +202,7 @@ h3 {
 #video-custom-controls {
     display: flex;
     justify-content: center;
-    gap: 5px; 
+    gap: 10px; /* Tăng khoảng cách nút trên mobile */
     margin-bottom: 10px;
     width: 100%; 
     max-width: 500px;
@@ -208,15 +210,15 @@ h3 {
     padding: 0 5px; 
 }
 #video-custom-controls button {
-    font-size: 0.9em;
-    padding: 6px 10px; 
+    font-size: 1em; /* Tăng kích thước nút trên mobile */
+    padding: 10px 15px; 
     border: none;
     border-radius: 5px;
     color: white;
     cursor: pointer;
     transition: background-color 0.2s;
     flex-grow: 1; 
-    min-width: 90px; 
+    min-width: 100px; /* Đảm bảo nút đủ lớn */
 }
 #video-play-btn { background-color: #27ae60; } 
 #video-pause-btn { background-color: #e74c3c; } 
@@ -232,6 +234,7 @@ h3 {
     background-color: #eee;
     border-radius: 8px;
     position: relative;
+    /* KHÔNG THAY ĐỔI: Đảm bảo video chiếm 100% chiều rộng của guide-display */
 }
 /* [THÊM MỚI] Lớp để ẩn video */
 #vimeo-player-container.video-hidden {
@@ -267,7 +270,7 @@ h3 {
 /* === Định dạng khu vực text guide === */
 #guide-text-container { width: 100%; margin-top: 10px; }
 #guide-text {
-    font-size: 0.9em; 
+    font-size: 1.0em; /* Tăng cỡ chữ cho mobile */
     color: #34495e;
     text-align: center;
     line-height: 1.4;
@@ -295,7 +298,7 @@ h3 {
     cursor: pointer;
     user-select: none; 
     text-align: left;
-    font-size: 1.1em; 
+    font-size: 1.2em; /* Tăng cỡ chữ cho mobile */
     color: #333;
     padding: 0 5px;
 }
@@ -313,8 +316,8 @@ h3 {
 
 #record-controls { display: flex; gap: 5px; flex-wrap: wrap; }
 #record-controls button {
-    padding: 6px 8px;
-    font-size: 0.8em; 
+    padding: 8px 10px; /* Tăng padding nút ghi âm */
+    font-size: 0.9em; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -327,7 +330,7 @@ h3 {
 #record-controls button:hover { background-color: #2980b9; }
 #record-controls button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
 
-#record-status { font-size: 0.8em; color: #e74c3c; min-height: 1.2em; padding: 0 5px; }
+#record-status { font-size: 0.9em; color: #e74c3c; min-height: 1.2em; padding: 0 5px; }
 #recording-preview { width: 100%; display: none; padding: 0 5px; }
 
 #comments-list {
@@ -364,50 +367,64 @@ h3 {
 /* === Phóng to lại cho Tablet/Desktop (Min-width: 768px) === */
 @media (min-width: 768px) {
     
+    /* [QUAN TRỌNG] Chuyển lại sang Bố cục 2 cột cho Tablet/Desktop */
     body {
+        grid-template-columns: 1fr 1fr; /* 2 cột bằng nhau */
+        grid-template-rows: auto auto 1fr;   /* Header, Auth, Nội dung chính */
+        grid-template-areas:
+            "header-area header-area"
+            "auth-area auth-area"
+            "chart-area guide-area"; /* IPA Chart bên trái, Guide/Video bên phải */
+        
+        height: 100vh; /* Cố định chiều cao lại */
+        max-height: 100vh;
+        overflow: hidden; /* Ngăn cuộn toàn bộ trang */
         padding: 20px; 
     }
+    
+    /* Thiết lập lại chiều cao cột phải cuộn và cột trái cuộn trên desktop */
+    .ipa-chart {
+        overflow-y: auto; /* Cho phép cột IPA cuộn */
+        padding-right: 5px; /* Thêm padding cho desktop */
+        margin-top: 0;
+    }
+    #guide-display {
+        overflow-y: auto; /* Cho phép cột Guide cuộn */
+        padding: 20px 25px; 
+    }
+    
     h1 { 
-        font-size: 2.5em; /* TĂNG: Tiêu đề chính */
-        margin: 10px 0 25px 0; /* Tăng margin dưới */
+        font-size: 2.5em; 
+        margin: 10px 0 25px 0; 
     }
     
     #logout-btn { 
         right: 20px; 
-        padding: 10px 18px; /* Tăng padding nút */
-        font-size: 1.1em; /* TĂNG: Cỡ chữ nút */
+        padding: 10px 18px; 
+        font-size: 1.1em; 
     }
     
-    h2 { font-size: 1.6em; } /* TĂNG: Tiêu đề phụ 1 */
-    h3 { font-size: 1.3em; } /* TĂNG: Tiêu đề phụ 2 */
+    h2 { font-size: 1.6em; } 
+    h3 { font-size: 1.3em; } 
     
-    /* CỘT CHÍNH: Thiết lập lại chiều cao cột cho màn hình lớn */
-    .ipa-chart, #guide-display {
-        /* Tính toán lại chiều cao dựa trên padding body (20px) và tổng chiều cao header/auth */
-        height: calc(100vh - 190px); 
-    }
-
-    #auth-container { margin-bottom: 30px; } /* Tăng margin dưới khu vực Auth */
-    #auth-container h2 { font-size: 1.8em; } /* TĂNG: Tiêu đề đăng nhập */
-    #auth-status { font-size: 1.3em; } /* TĂNG: Trạng thái đăng nhập */
-    
-    #guide-display { padding: 20px 25px; } /* Tăng padding cột phải */
+    #auth-container { margin-bottom: 30px; } 
+    #auth-container h2 { font-size: 1.8em; } 
+    #auth-status { font-size: 1.3em; } 
     
     /* Input Form và nút */
-    #login-form { gap: 10px; } /* Tăng khoảng cách */
+    #login-form { gap: 10px; } 
     #login-form input, #login-btn {
-        max-width: 350px; /* Tăng chiều rộng tối đa */
-        padding: 12px 20px; /* Tăng padding nút/input */
-        font-size: 1em; /* Tăng cỡ chữ input/nút */
+        max-width: 350px; 
+        padding: 12px 20px; 
+        font-size: 1em; 
     }
-    /* Thêm cho văn bản footer (nếu có) */
     #auth-container p { font-size: 1.1em; }
 
 
     /* Bảng IPA */
     .ipa-section {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Tăng min-width ô */
-        gap: 12px; /* Tăng khoảng cách */
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+        gap: 12px; 
         padding: 18px;
     }
 
@@ -416,21 +433,27 @@ h3 {
         padding: 12px;
         min-height: 90px;
     }
-    .ipa-symbol .symbol { font-size: 2.2em; } /* TĂNG LỚN: Ký tự IPA */
-    .ipa-symbol .example { font-size: 1em; } /* TĂNG: Ví dụ từ */
+    .ipa-symbol .symbol { font-size: 2.2em; } 
+    .ipa-symbol .example { font-size: 1em; } 
 
     /* Cột Hướng dẫn và Bình luận */
-    #guide-text { font-size: 1.2em; padding: 0; } /* TĂNG: Text hướng dẫn */
+    #guide-text { font-size: 1.2em; padding: 0; } 
     #comments-section h3 { font-size: 1.4em; padding: 0; }
-    #record-controls button { font-size: 1em; padding: 12px 18px; } /* TĂNG: Nút ghi âm */
+    #record-controls button { font-size: 1em; padding: 12px 18px; } 
     #comments-list { max-height: 450px; }
-    .comment-item p { font-size: 1.1em; } /* TĂNG: Nội dung bình luận */
-    .comment-timestamp { font-size: 0.9em; } /* TĂNG: Timestamp */
+    .comment-item p { font-size: 1.1em; } 
+    .comment-timestamp { font-size: 0.9em; } 
     
     /* Nút Video */
     #video-custom-controls button {
         font-size: 1em;
         padding: 10px 15px; 
+    }
+    
+    /* [CẬP NHẬT] Tính toán chiều cao cột cho desktop */
+    /* Chiều cao cột chính: 100vh - (Header margin 35px + Auth 130px + Padding body 40px) ~ 205px. Giữ 190px như cũ là hợp lý. */
+    .ipa-chart, #guide-display {
+        height: calc(100vh - 190px); 
     }
 }
 
@@ -439,7 +462,6 @@ h3 {
     
     /* Cho phép 3+ cột trong cột IPA */
     .ipa-section {
-        /* Đã tăng min-width ô lên 140px và tăng khoảng cách */
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
         gap: 20px; 
         padding: 30px; 
@@ -447,33 +469,32 @@ h3 {
 
     /* Kích thước chữ to hơn cho các thành phần chính */
     h1 { 
-        font-size: 3.5em; /* Tiêu đề chính TO NHẤT */
+        font-size: 3.5em; 
         margin: 20px 0 40px 0;
     }
-    /* Tăng cho các tiêu đề phụ nằm ngoài Auth */
     h2 { font-size: 2.5em; } 
     h3 { font-size: 2.0em; } 
 
     /* Khu vực Auth */
     #auth-container { 
-        padding: 30px; /* Tăng padding */
-        margin-bottom: 40px; /* Tăng margin dưới */
+        padding: 30px; 
+        margin-bottom: 40px; 
     }
     
-    #auth-container h2 { font-size: 2.6em; } /* 🌟 TĂNG: Tiêu đề đăng nhập 🌟 */
-    #auth-status { font-size: 1.6em; } /* 🌟 TĂNG: Trạng thái đăng nhập 🌟 */
+    #auth-container h2 { font-size: 2.6em; } 
+    #auth-status { font-size: 1.6em; } 
 
     /* Input và nút rộng hơn trên desktop */
     #login-form input, #login-btn {
         max-width: 450px !important; 
-        padding: 18px 25px; /* TĂNG: padding input/nút */
-        font-size: 1.5em; /* 🌟 TĂNG: Cỡ chữ input/nút 🌟 */
+        padding: 18px 25px; 
+        font-size: 1.5em; 
     }
     
-    #login-form { gap: 15px; } /* TĂNG: Khoảng cách giữa các phần tử */
+    #login-form { gap: 15px; } 
 
     /* Tăng cỡ chữ cho văn bản footer dưới form đăng nhập */
-    #auth-container p { font-size: 1.4em; } /* 🌟 TĂNG: Văn bản link 🌟 */
+    #auth-container p { font-size: 1.4em; } 
 
 
     /* Ô Ký tự IPA */
