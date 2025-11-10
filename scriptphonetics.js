@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         videoUrl.searchParams.set('controls', '0');
         videoUrl.searchParams.set('title', '0');    
         videoUrl.searchParams.set('byline', '0'); 
-        videoUrl.searchParams.set('api', '1');          // <--- THÊM THEO YÊU CẦU
-        videoUrl.searchParams.set('player_id', 'vimeo-ifr'); // <--- THÊM THEO YÊU CẦU
+        videoUrl.searchParams.set('api', '1');          
+        videoUrl.searchParams.set('player_id', 'vimeo-ifr'); 
         
         return videoUrl.href;
     }
@@ -160,27 +160,26 @@ document.addEventListener('DOMContentLoaded', () => {
     symbols.forEach(symbol => {
         symbol.addEventListener('click', () => {
             
-            // hideVideoAndShowPlaceholder(); // KHÔNG CẦN ẨN MÀ CHỈ DỪNG/TẢI MỚI
-
             const videoSrc = symbol.dataset.videoSrc;
             currentVideoSrc = videoSrc; // Lưu trữ src GỐC
             
             const guideText = symbol.dataset.guide;
 
             if (videoSrc) {
-                // Tải video MỚI VÀ PHÁT (autoplay=1)
+                // [THAY ĐỔI] Tải video MỚI VÀ DỪNG (autoplay=0)
                 vimeoPlayerContainer.classList.remove('video-hidden');
-                loadOrUpdateIframe(currentVideoSrc, '1'); 
-                videoPlaceholder.style.display = 'none'; // Ẩn placeholder khi phát
-                
-                videoPlayBtn.disabled = true; 
-                videoPauseBtn.disabled = false;
+                loadOrUpdateIframe(currentVideoSrc, '0'); // <-- ĐẢM BẢO KHÔNG TỰ CHẠY
+                videoPlaceholder.style.display = 'block'; // Hiển thị placeholder
+
+                // Cho phép người dùng bấm Play
+                videoPlayBtn.disabled = false; 
+                videoPauseBtn.disabled = true; // Nút Pause vô hiệu hóa lúc này
                 
                 guideTextElement.textContent = guideText || "Chưa có hướng dẫn cho ký tự này.";
                 
             } else {
                 // XỬ LÝ KHI KHÔNG CÓ VIDEO
-                hideVideoAndShowPlaceholder(); // Ẩn hoàn toàn nếu không có SRC
+                hideVideoAndShowPlaceholder();
                 guideTextElement.textContent = guideText || "Chưa có hướng dẫn cho ký tự này.";
                 
                 videoPlayBtn.disabled = true; 
@@ -207,13 +206,30 @@ document.addEventListener('DOMContentLoaded', () => {
         commentContentWrapper.classList.toggle('collapsed');
     });
 
-    // --- LOGIC HOÀN THÀNH KÝ TỰ (GIỮ NGUYÊN) ---
+    // --- LOGIC HOÀN THÀNH KÝ TỰ (ĐÃ SỬA ĐỂ DÙNG USER ID ỔN ĐỊNH) ---
     async function loadCompletionStatus() {
         let userId = localStorage.getItem('user_id');
-        if (!userId) {
-            userId = 'anonymous_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('user_id', userId);
-            console.log("Đã tạo User ID mới cho thiết bị này: " + userId);
+        
+        // [THAY ĐỔI] Nếu chưa có User ID ổn định, yêu cầu người dùng nhập
+        if (!userId || userId.startsWith('anonymous_')) {
+            let inputId = prompt("Vui lòng nhập một **TÊN NGƯỜI DÙNG** (ví dụ: 'nguyenvana') để lưu và đồng bộ trạng thái hoàn thành của bạn trên mọi thiết bị:");
+            
+            if (inputId) {
+                userId = inputId.toLowerCase().trim(); // Chuẩn hóa ID
+                localStorage.setItem('user_id', userId);
+                alert(`Trạng thái hoàn thành của bạn sẽ được lưu với ID: ${userId}`);
+            } else {
+                // Nếu người dùng không nhập, quay lại chế độ ẩn danh (không đồng bộ)
+                userId = 'anonymous_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('user_id', userId);
+                console.log("Đã tạo User ID ẩn danh mới cho thiết bị này: " + userId);
+            }
+        }
+        
+        if (userId.startsWith('anonymous_')) {
+            console.log("Đang ở chế độ ẩn danh. Trạng thái không đồng bộ.");
+        } else {
+            console.log("Sử dụng User ID ổn định: " + userId);
         }
         
         try {
@@ -241,14 +257,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error('Lỗi khi tải trạng thái hoàn thành từ Supabase:', e);
         }
-        
-        localStorage.removeItem('ipa_completion_status');
     }
 
     async function saveCompletionStatus(symbol, isCompleted) {
         const userId = localStorage.getItem('user_id');
-        if (!userId) {
-            console.error("Không có User ID. Không thể lưu trạng thái hoàn thành.");
+        // [THAY ĐỔI] Ngăn việc lưu nếu User ID là ID ẩn danh (không đồng bộ)
+        if (!userId || userId.startsWith('anonymous_')) {
+            alert("Để lưu trạng thái hoàn thành, bạn cần có **TÊN NGƯỜI DÙNG** ổn định. Vui lòng tải lại trang để đăng nhập tên người dùng.");
             return;
         }
         
