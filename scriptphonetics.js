@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentEmail = '';
             authContainer.style.display = 'block';
             logoutBtn.style.display = 'none';
-            authStatus.textContent = 'Email: hv1@gmail.com, Mật khẩu: hv1';
+authStatus.innerText = 'Tài khoản của NHƯ Email: hv1@gmail.com, Mật khẩu: hv1\n\nTài khoản của NHÂN Email: hv2@gmail.com, Mật khẩu: hv2';
 
             ipaChart.style.display = 'none'; 
             guideDisplay.style.display = 'none'; 
@@ -727,5 +727,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- KẾT THÚC LOGIC TAB/SWIPE NGANG ---
     // Gọi hàm initialLoad để kiểm tra session ngay khi DOMContentLoaded
     initialLoad();
+
 
 });
